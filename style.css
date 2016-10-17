@@ -1,0 +1,9 @@
+.container {
+	margin-top: 50px;
+}
+
+#time_display {
+	margin: 20px;
+	padding : 30px;
+	font-size: 80px;
+}

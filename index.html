@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Pomodoro</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="semantic/semantic.css">
+</head>
+<body>
+	
+	<div class="ui centered grid">
+		<div class="container">
+			<div class="ui segment">
+
+				<div class="row">
+					<button class="ui teal button" id="pomodoro">Pomodoro</button>
+					<button class="ui teal button" id="short_break">Short Break</button>
+					<button class="ui teal button" id="long_break">Long Break</button>
+				</div>
+
+				<div id="time_display" class="row">
+					<span id="minutes">00</span> : <span id="seconds">00</span>
+				</div>
+
+				<div class="row">
+					<button class="ui green button" id="start">Start</button>
+					<button class="ui orange button" id="stop">Stop</button>
+					<button class="ui red button" id="reset">Reset</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<script src="node_modules/jquery/dist/jquery.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>
