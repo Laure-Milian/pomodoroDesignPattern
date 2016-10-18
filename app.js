@@ -1,44 +1,43 @@
-
 "use strict";
 (function() {
 
 	
 	var app = {
 		
-		time : 1500,
+		time : 2,
 		intervalID : null,
-		step : "longBreak",
+		step : "pomodoro",
 
 		init : function() {
-			app.listeners();
-			app.separateTime();
+			this.listeners();
+			this.separateTime();
 		},
 
 		listeners : function() {
-			$("#start").on("click", app.start);
-			$("#stop").on("click", app.stop);
-			$("#reset").on("click", app.reset);
-			$("#pomodoro").on("click", app.pomodoro);
-			$("#short_break").on("click", app.shortBreak);
-			$("#long_break").on("click", app.longBreak);
+			$("#start").on("click", this.start.bind(this));
+			$("#stop").on("click", this.stop.bind(this));
+			$("#reset").on("click", this.reset.bind(this));
+			$("#pomodoro").on("click", this.pomodoro.bind(this));
+			$("#short_break").on("click", this.shortBreak.bind(this));
+			$("#long_break").on("click", this.longBreak.bind(this));
 		},
 
 		start : function() {
-			if (!app.intervalID) {
-				app.intervalID = setInterval(function() {
-					app.separateTime();
-					app.time--
-					console.log(app.time);
-					if (app.time < 0) {
-						app.stop();
-						app.nextStep();
+			if (!this.intervalID) {
+				this.intervalID = setInterval(function() {
+					this.separateTime();
+					this.time--
+					console.log(this.time);
+					if (this.time < 0) {
+						this.stop();
+						this.nextStep();
 					}
-				}, 1000);
+				}.bind(this), 1000);
 			}
 		},
 
 		nextStep : function() {
-			if (app.step === "pomodoro") {
+			if (this.step === "pomodoro") {
 				swal({ 
 					title: 'Pomodoro terminé !',
 					text: 'Take a break',
@@ -49,24 +48,24 @@
 					confirmButtonClass: 'confirm-class',
 					cancelButtonClass: 'cancel-class'
 				}).done();
-				$(".confirm-class").on("click", app.shortBreak);
-				$(".cancel-class").on("click", app.longBreak);
-			} else if (app.step === "shortBreak" || app.step === "longBreak") {
+				$(".confirm-class").on("click", this.shortBreak.bind(this));
+				$(".cancel-class").on("click", this.longBreak.bind(this));
+			} else if (this.step === "shortBreak" || this.step === "longBreak") {
 				swal({
 					title: 'The break is over !',
 					text: 'You need to work now',
 					type: 'error',
 					confirmButtonText: 'Back to the pomodoro',
 				}).done();
-				app.pomodoro();
+				this.pomodoro();
 			}
 		},
 
 		separateTime : function() {
-			var minutes = Math.floor(app.time / 60);
-			var seconds = Math.floor(app.time % 60);
-			app.displayTime(minutes, "#minutes");
-			app.displayTime(seconds, "#seconds");
+			var minutes = Math.floor(this.time / 60);
+			var seconds = Math.floor(this.time % 60);
+			this.displayTime(minutes, "#minutes");
+			this.displayTime(seconds, "#seconds");
 		},
 
 		displayTime : function(timeElement, selector) {
@@ -78,38 +77,38 @@
 		},
 
 		stop : function() {
-			clearInterval(app.intervalID);
-			app.intervalID = null;
+			clearInterval(this.intervalID);
+			this.intervalID = null;
 		},
 
 		reset : function() {
-			clearInterval(app.intervalID);
-			if (app.step === "pomodoro") {
-				app.time = 1500;
-			} else if (app.step === "shortBreak") {
-				app.time = 300;
+			clearInterval(this.intervalID);
+			if (this.step === "pomodoro") {
+				this.time = 1500;
+			} else if (this.step === "shortBreak") {
+				this.time = 300;
 			} else {
-				app.time = 600;
+				this.time = 600;
 			}
-			app.separateTime();
+			this.separateTime();
 		},
 
 		pomodoro : function() {
-			app.time = 1500;
-			app.separateTime();
-			app.step = "pomodoro";
+			this.time = 1500;
+			this.separateTime();
+			this.step = "pomodoro";
 		},
 
 		shortBreak : function() {
-			app.time = 300;
-			app.separateTime();
-			app.step = "shortBreak";
+			this.time = 300;
+			this.separateTime();
+			this.step = "shortBreak";
 		},
 
 		longBreak : function() {
-			app.time = 600;
-			app.separateTime();
-			app.step = "longBreak";
+			this.time = 600;
+			this.separateTime();
+			this.step = "longBreak";
 		}
 
 	}
