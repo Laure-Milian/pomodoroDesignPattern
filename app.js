@@ -1,14 +1,17 @@
+
+"use strict";
 (function() {
+
 	
 	var app = {
 		
-		time : 1500,
+		time : 2,
 		intervalID : null,
-		step : "pomodoro",
+		step : "longBreak",
 
 		init : function() {
 			app.listeners();
-			app.displayTime();
+			app.separateTime();
 		},
 
 		listeners : function() {
@@ -22,16 +25,54 @@
 
 		start : function() {
 			app.intervalID = setInterval(function() {
-				app.displayTime();
+				app.separateTime();
 				app.time--
+				console.log(app.time);
+				if (app.time < 0) {
+					app.stop();
+					app.nextStep();
+				}
 			}, 1000);
 		},
 
-		displayTime : function() {
+		nextStep : function() {
+			if (app.step === "pomodoro") {
+				swal({ 
+					title: 'Pomodoro terminé !',
+					text: 'Take a break',
+					type: 'success',
+					confirmButtonText: 'Short break',
+					showCancelButton : true,
+					cancelButtonText: 'Long break',
+					confirmButtonClass: 'confirm-class',
+					cancelButtonClass: 'cancel-class'
+				}).done();
+				$(".confirm-class").on("click", app.shortBreak);
+				$(".cancel-class").on("click", app.longBreak);
+			} else if (app.step === "shortBreak" || app.step === "longBreak") {
+				swal({
+					title: 'The break is over !',
+					text: 'You need to work now',
+					type: 'error',
+					confirmButtonText: 'Back to the pomodoro',
+				}).done();
+				app.pomodoro();
+			}
+		},
+
+		separateTime : function() {
 			var minutes = Math.floor(app.time / 60);
 			var seconds = Math.floor(app.time % 60);
-			$("#minutes").html(minutes);
-			$("#seconds").html(seconds);
+			app.displayTime(minutes, "#minutes");
+			app.displayTime(seconds, "#seconds");
+		},
+
+		displayTime : function(timeElement, selector) {
+			if (timeElement < 10) {
+				$(selector).html("0" + timeElement);
+			} else {
+				$(selector).html(timeElement);
+			}
 		},
 
 		stop : function() {
@@ -47,24 +88,24 @@
 			} else {
 				app.time = 600;
 			}
-			app.displayTime();
+			app.separateTime();
 		},
 
 		pomodoro : function() {
 			app.time = 1500;
-			app.displayTime();
+			app.separateTime();
 			app.step = "pomodoro";
 		},
 
 		shortBreak : function() {
 			app.time = 300;
-			app.displayTime();
+			app.separateTime();
 			app.step = "shortBreak";
 		},
 
 		longBreak : function() {
 			app.time = 600;
-			app.displayTime();
+			app.separateTime();
 			app.step = "longBreak";
 		}
 
