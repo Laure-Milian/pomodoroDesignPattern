@@ -5,7 +5,7 @@
 	
 	var app = {
 		
-		time : 2,
+		time : 1500,
 		intervalID : null,
 		step : "longBreak",
 
@@ -24,15 +24,17 @@
 		},
 
 		start : function() {
-			app.intervalID = setInterval(function() {
-				app.separateTime();
-				app.time--
-				console.log(app.time);
-				if (app.time < 0) {
-					app.stop();
-					app.nextStep();
-				}
-			}, 1000);
+			if (!app.intervalID) {
+				app.intervalID = setInterval(function() {
+					app.separateTime();
+					app.time--
+					console.log(app.time);
+					if (app.time < 0) {
+						app.stop();
+						app.nextStep();
+					}
+				}, 1000);
+			}
 		},
 
 		nextStep : function() {
@@ -77,6 +79,7 @@
 
 		stop : function() {
 			clearInterval(app.intervalID);
+			app.intervalID = null;
 		},
 
 		reset : function() {
