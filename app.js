@@ -9,7 +9,8 @@
 	};
 
 	var app = {		
-		timeSeconds : 5,
+		timeSeconds : 1500,
+		timeStart : 1500,
 		intervalID : null,
 		step : "pomodoro",
 
@@ -22,22 +23,26 @@
 			$("#start").on("click", this.start.bind(this));
 			$("#stop").on("click", this.stop.bind(this));
 			$("#reset").on("click", this.reset.bind(this));
-			$("#pomodoro").on("click", this.selectNextStep.bind(this, 5, steps.pomodoro));
-			$("#short_break").on("click", this.selectNextStep.bind(this, 3, steps.shortBreak));
-			$("#long_break").on("click", this.selectNextStep.bind(this, 6, steps.longBreak));
+			$("#pomodoro").on("click", this.selectNextStep.bind(this, 1500, steps.pomodoro));
+			$("#short_break").on("click", this.selectNextStep.bind(this, 300, steps.shortBreak));
+			$("#long_break").on("click", this.selectNextStep.bind(this, 600, steps.longBreak));
 		},
 
 		start : function() {
 			if (!this.intervalID) {
+				var startSeconds = (new Date()).getSeconds();
+
 				this.intervalID = setInterval(function() {
 					this.separateTime();
-					this.timeSeconds--
-					console.log(this.timeSeconds);
+					var endSeconds = (new Date()).getSeconds();
+					this.timeSeconds = this.timeStart - (endSeconds - startSeconds);
+
 					if (this.timeSeconds < 0) {
 						this.stop();
 						this.nextStep();
 					}
-				}.bind(this), 1000);
+
+				}.bind(this), 100);
 			}
 		},
 
@@ -53,8 +58,8 @@
 					confirmButtonClass: 'confirm-class',
 					cancelButtonClass: 'cancel-class'
 				}).done();
-				$(".confirm-class").on("click", this.selectNextStep.bind(this, 3, steps.shortBreak));
-				$(".cancel-class").on("click", this.selectNextStep.bind(this, 6, steps.longBreak));
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 300, steps.shortBreak));
+				$(".cancel-class").on("click", this.selectNextStep.bind(this, 600, steps.longBreak));
 			} else if (this.step === "shortBreak" || this.step === "longBreak") {
 				swal({
 					title: 'The break is over !',
@@ -63,7 +68,7 @@
 					confirmButtonText: 'Back to the pomodoro',
 					confirmButtonClass: 'confirm-class'
 				}).done();
-				$(".confirm-class").on("click", this.selectNextStep.bind(this, 5, steps.pomodoro));
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 1500, steps.pomodoro));
 			}
 		},
 
@@ -89,19 +94,20 @@
 		reset : function() {
 			clearInterval(this.intervalID);
 			if (this.step === steps.pomodoro) {
-				this.timeSeconds = 5;
+				this.timeSeconds = 1500;
 			} else if (this.step === steps.shortBreak) {
-				this.timeSeconds = 3;
+				this.timeSeconds = 300;
 			} else {
-				this.timeSeconds = 6;
+				this.timeSeconds = 600;
 			}
 			this.separateTime();
 		},
 
 		selectNextStep : function(timeStep, nameStep) {
-			this.timeSeconds = timeStep;
+			this.timeSeconds = this.timeStart = timeStep;
 			this.separateTime();
 			this.step = nameStep;
+			$(this).addClass("active"); 
 		}
 
 	}
