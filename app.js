@@ -4,7 +4,7 @@
 	
 	var app = {
 		
-		time : 5,
+		time : 1500,
 		intervalID : null,
 		step : "pomodoro",
 
