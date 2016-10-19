@@ -1,10 +1,20 @@
-"use strict";
-(function() {
 
+(function() {
+	"use strict"; 
+	/*
+		Privilégie le ici. De cette manière, dans le scope de ta IIFE, this != window.
+		A l'extérieur, le comportement peut différé.
+	*/
 	
+	// Pour éviter de te tromper dans tes chaînes de caractères, créer des constantes
+	var STEPS = {
+		POMODORO : "pomodoro",
+		SHORT_BREAK : "shortBreak",
+		// ....
+	};
 	var app = {
 		
-		time : 1500,
+		time : 1500,// Cf CodeReview https://github.com/SimplonTlse02/programme-dev-web/wiki/Semaine-07-Projets-Js-avances#mercredi
 		intervalID : null,
 		step : "pomodoro",
 
@@ -17,8 +27,9 @@
 			$("#start").on("click", this.start.bind(this));
 			$("#stop").on("click", this.stop.bind(this));
 			$("#reset").on("click", this.reset.bind(this));
-			$("#pomodoro").on("click", this.selectNextStep.bind(this, 1500, "pomodoro"));
-			$("#short_break").on("click", this.selectNextStep.bind(this, 300, "shortBreak"));
+			// Bien joué avec les arguments sur le bind.
+			$("#pomodoro").on("click", this.selectNextStep.bind(this, 1500, STEPS.POMODORO));
+			$("#short_break").on("click", this.selectNextStep.bind(this, 300, STEPS.SHORT_BREAK));
 			$("#long_break").on("click", this.selectNextStep.bind(this, 600, "longBreak"));
 		},
 
@@ -37,7 +48,7 @@
 		},
 
 		nextStep : function() {
-			if (this.step === "pomodoro") {
+			if (this.step === STEPS.POMODORO) {
 				swal({ 
 					title: 'Pomodoro terminé !',
 					text: 'Take a break',
@@ -58,7 +69,7 @@
 					confirmButtonText: 'Back to the pomodoro',
 					confirmButtonClass: 'confirm-class'
 				}).done();
-				$(".confirm-class").on("click", this.selectNextStep.bind(this, 1500, "pomodoro"));
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 1500, STEPS.POMODORO));
 			}
 		},
 
@@ -70,6 +81,10 @@
 		},
 
 		displayTime : function(timeElement, selector) {
+			/*
+				Voir ligne 105 :
+				https://github.com/jordanlefort/tomatoV2/pull/1/files
+			*/
 			if (timeElement < 10) {
 				$(selector).html("0" + timeElement);
 			} else {
@@ -84,9 +99,9 @@
 
 		reset : function() {
 			clearInterval(this.intervalID);
-			if (this.step === "pomodoro") {
+			if (this.step === STEPS.POMODORO) {
 				this.time = 1500;
-			} else if (this.step === "shortBreak") {
+			} else if (this.step === STEPS.SHORT_BREAK) {
 				this.time = 300;
 			} else {
 				this.time = 600;
