@@ -1,20 +1,15 @@
 
 (function() {
 	"use strict"; 
-	/*
-		Privilégie le ici. De cette manière, dans le scope de ta IIFE, this != window.
-		A l'extérieur, le comportement peut différé.
-	*/
 	
-	// Pour éviter de te tromper dans tes chaînes de caractères, créer des constantes
-	var STEPS = {
-		POMODORO : "pomodoro",
-		SHORT_BREAK : "shortBreak",
-		// ....
+	var steps = {
+		pomodoro : "pomodoro",
+		shortBreak : "shortBreak",
+		longBreak : "longBreak"
 	};
-	var app = {
-		
-		time : 1500,// Cf CodeReview https://github.com/SimplonTlse02/programme-dev-web/wiki/Semaine-07-Projets-Js-avances#mercredi
+
+	var app = {		
+		timeSeconds : 5,
 		intervalID : null,
 		step : "pomodoro",
 
@@ -27,19 +22,18 @@
 			$("#start").on("click", this.start.bind(this));
 			$("#stop").on("click", this.stop.bind(this));
 			$("#reset").on("click", this.reset.bind(this));
-			// Bien joué avec les arguments sur le bind.
-			$("#pomodoro").on("click", this.selectNextStep.bind(this, 1500, STEPS.POMODORO));
-			$("#short_break").on("click", this.selectNextStep.bind(this, 300, STEPS.SHORT_BREAK));
-			$("#long_break").on("click", this.selectNextStep.bind(this, 600, "longBreak"));
+			$("#pomodoro").on("click", this.selectNextStep.bind(this, 5, steps.pomodoro));
+			$("#short_break").on("click", this.selectNextStep.bind(this, 3, steps.shortBreak));
+			$("#long_break").on("click", this.selectNextStep.bind(this, 6, steps.longBreak));
 		},
 
 		start : function() {
 			if (!this.intervalID) {
 				this.intervalID = setInterval(function() {
 					this.separateTime();
-					this.time--
-					console.log(this.time);
-					if (this.time < 0) {
+					this.timeSeconds--
+					console.log(this.timeSeconds);
+					if (this.timeSeconds < 0) {
 						this.stop();
 						this.nextStep();
 					}
@@ -48,7 +42,7 @@
 		},
 
 		nextStep : function() {
-			if (this.step === STEPS.POMODORO) {
+			if (this.step === steps.pomodoro) {
 				swal({ 
 					title: 'Pomodoro terminé !',
 					text: 'Take a break',
@@ -59,8 +53,8 @@
 					confirmButtonClass: 'confirm-class',
 					cancelButtonClass: 'cancel-class'
 				}).done();
-				$(".confirm-class").on("click", this.selectNextStep.bind(this, 300, "shortBreak"));
-				$(".cancel-class").on("click", this.selectNextStep.bind(this, 600, "longBreak"));
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 3, steps.shortBreak));
+				$(".cancel-class").on("click", this.selectNextStep.bind(this, 6, steps.longBreak));
 			} else if (this.step === "shortBreak" || this.step === "longBreak") {
 				swal({
 					title: 'The break is over !',
@@ -69,27 +63,22 @@
 					confirmButtonText: 'Back to the pomodoro',
 					confirmButtonClass: 'confirm-class'
 				}).done();
-				$(".confirm-class").on("click", this.selectNextStep.bind(this, 1500, STEPS.POMODORO));
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 5, steps.pomodoro));
 			}
 		},
 
 		separateTime : function() {
-			var minutes = Math.floor(this.time / 60);
-			var seconds = Math.floor(this.time % 60);
+			var minutes = Math.floor(this.timeSeconds / 60);
+			var seconds = Math.floor(this.timeSeconds % 60);
 			this.displayTime(minutes, "#minutes");
 			this.displayTime(seconds, "#seconds");
 		},
 
 		displayTime : function(timeElement, selector) {
-			/*
-				Voir ligne 105 :
-				https://github.com/jordanlefort/tomatoV2/pull/1/files
-			*/
 			if (timeElement < 10) {
-				$(selector).html("0" + timeElement);
-			} else {
-				$(selector).html(timeElement);
-			}
+				timeElement = "0" + timeElement;
+			} 
+			$(selector).html(timeElement);
 		},
 
 		stop : function() {
@@ -99,22 +88,20 @@
 
 		reset : function() {
 			clearInterval(this.intervalID);
-			if (this.step === STEPS.POMODORO) {
-				this.time = 1500;
-			} else if (this.step === STEPS.SHORT_BREAK) {
-				this.time = 300;
+			if (this.step === steps.pomodoro) {
+				this.timeSeconds = 5;
+			} else if (this.step === steps.shortBreak) {
+				this.timeSeconds = 3;
 			} else {
-				this.time = 600;
+				this.timeSeconds = 6;
 			}
 			this.separateTime();
 		},
 
 		selectNextStep : function(timeStep, nameStep) {
-			this.time = timeStep;
-			console.log(this.time);
+			this.timeSeconds = timeStep;
 			this.separateTime();
 			this.step = nameStep;
-			console.log(this.step);
 		}
 
 	}
