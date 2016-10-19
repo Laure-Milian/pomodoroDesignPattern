@@ -4,7 +4,7 @@
 	
 	var app = {
 		
-		time : 2,
+		time : 5,
 		intervalID : null,
 		step : "pomodoro",
 
@@ -17,9 +17,9 @@
 			$("#start").on("click", this.start.bind(this));
 			$("#stop").on("click", this.stop.bind(this));
 			$("#reset").on("click", this.reset.bind(this));
-			$("#pomodoro").on("click", this.pomodoro.bind(this));
-			$("#short_break").on("click", this.shortBreak.bind(this));
-			$("#long_break").on("click", this.longBreak.bind(this));
+			$("#pomodoro").on("click", this.selectNextStep.bind(this, 1500, "pomodoro"));
+			$("#short_break").on("click", this.selectNextStep.bind(this, 300, "shortBreak"));
+			$("#long_break").on("click", this.selectNextStep.bind(this, 600, "longBreak"));
 		},
 
 		start : function() {
@@ -48,16 +48,17 @@
 					confirmButtonClass: 'confirm-class',
 					cancelButtonClass: 'cancel-class'
 				}).done();
-				$(".confirm-class").on("click", this.shortBreak.bind(this));
-				$(".cancel-class").on("click", this.longBreak.bind(this));
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 300, "shortBreak"));
+				$(".cancel-class").on("click", this.selectNextStep.bind(this, 600, "longBreak"));
 			} else if (this.step === "shortBreak" || this.step === "longBreak") {
 				swal({
 					title: 'The break is over !',
 					text: 'You need to work now',
 					type: 'error',
 					confirmButtonText: 'Back to the pomodoro',
+					confirmButtonClass: 'confirm-class'
 				}).done();
-				this.pomodoro();
+				$(".confirm-class").on("click", this.selectNextStep.bind(this, 1500, "pomodoro"));
 			}
 		},
 
@@ -93,22 +94,12 @@
 			this.separateTime();
 		},
 
-		pomodoro : function() {
-			this.time = 1500;
+		selectNextStep : function(timeStep, nameStep) {
+			this.time = timeStep;
+			console.log(this.time);
 			this.separateTime();
-			this.step = "pomodoro";
-		},
-
-		shortBreak : function() {
-			this.time = 300;
-			this.separateTime();
-			this.step = "shortBreak";
-		},
-
-		longBreak : function() {
-			this.time = 600;
-			this.separateTime();
-			this.step = "longBreak";
+			this.step = nameStep;
+			console.log(this.step);
 		}
 
 	}
